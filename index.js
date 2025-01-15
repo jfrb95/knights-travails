@@ -11,7 +11,7 @@ function knightMoves(from, to) {
     const knight = Knight();
 
     const queue = Queue();
-    //const visitedNodes =  create KeySet - a wrapper that pairs a key conversion function with a Set
+    //const visitedNodes =  use keyset with coordtokey
 
     queue.enqueue(PositionNode(from, 0));
 
@@ -42,7 +42,7 @@ function knightMoves(from, to) {
     //  enqueue single nodes if they have not been visited yet
 }
 
-//just added, not used yet
+//factory functions
 function PositionNode(position, totalDistanceToPosition) {
     return {
         get position() {
@@ -53,6 +53,23 @@ function PositionNode(position, totalDistanceToPosition) {
         }
     }
 }
+function KeySet(funcConvertToKey) {
+    const set = new Set();
+
+    return {
+        add(value) {
+            set.add(funcConvertToKey(value));
+        },
+        delete(value) {
+            set.delete(funcConvertToKey(value));
+        },
+        has(value) {
+            return set.has(funcConvertToKey(value));
+        }
+    }
+}
+
+//helper functions
 function validateInput(input) {
     if (!Array.isArray(input) ||
         input.length !== 2 ||
@@ -69,5 +86,14 @@ function validateInput(input) {
 function validateInputs(...inputs) {
     for (const input of inputs) {
         validateInput(input);
+    }
+}
+function coordToKey(x, y) {
+    let coords;
+
+    if (!y && Array.isArray(x)) {
+        coords = x;
+    } else {
+        coords = [x, y];
     }
 }
