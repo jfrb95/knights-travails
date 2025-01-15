@@ -3,12 +3,37 @@ import { Knight } from "./modules/knight.js";
 
 const log = console.log;
 
+knightMoves([0, 0], [1, 1]);
+
 function knightMoves(from, to) {
     validateInputs(from, to);
 
-    const queue = Queue();
+    const knight = Knight();
 
-    queue.enqueue(from);
+    const queue = Queue();
+    //const visitedNodes =  create KeySet - a wrapper that pairs a key conversion function with a Set
+
+    queue.enqueue(PositionNode(from, 0));
+
+    let SAFETY = 20;
+
+    while (!queue.isEmpty() && SAFETY > 0) {
+        const currentNode = queue.dequeue();
+        const currentDistance = currentNode.distance;
+
+        const validMoves = knight.validMoves(currentNode.position);
+        
+        log('position', currentNode.position)
+        for (const validMove of validMoves) {
+            queue.enqueue(PositionNode(validMove, currentDistance + 1));
+            log(validMove);
+        }
+
+
+
+        SAFETY -= 1;
+        log(SAFETY);
+    }
 
     //do until <to> is dequeued:
     //  node = dequeue
@@ -18,13 +43,13 @@ function knightMoves(from, to) {
 }
 
 //just added, not used yet
-function MoveNode(movedTo, distance) {
+function PositionNode(position, totalDistanceToPosition) {
     return {
-        get movedTo() {
-            return movedTo;
+        get position() {
+            return position;
         },
         get distance() {
-            return distance;
+            return totalDistanceToPosition;
         }
     }
 }
@@ -38,7 +63,7 @@ function validateInput(input) {
         input[1] < 0 ||
         input[1] > 7) 
         {
-        throw new Error('Argument must be an array of 2 integers between 0 and 7 inclusive.', `${array}.`)
+        throw new Error('Argument must be an array of 2 integers between 0 and 7 inclusive.', `${input}.`)
     }
 }
 function validateInputs(...inputs) {

@@ -1,5 +1,7 @@
 import { GameParameters } from "./game.js";
 
+const log = console.log;
+
 const game = GameParameters();
 
 export function Knight() {
@@ -7,18 +9,19 @@ export function Knight() {
 
     function validMoves(position, arg2=false) {
         let currentPosition;
-    
+
         //allows for 2 coords in an array, or as separate arguments
         if (!arg2 && Array.isArray(position)) {
             currentPosition = position;
         } else {
             currentPosition = [position, arg2];
         }
-    
+
         const canMoveTo = [];
-    
+
         for (const movement of KNIGHTS_GAIT) {
-            const newCoords = addCoords(currentPosition, movement);
+
+            const newCoords = sumCoords(currentPosition, movement);
             if (validCoords(newCoords)) {
                 canMoveTo.push(newCoords);
             }
@@ -27,7 +30,7 @@ export function Knight() {
         return canMoveTo;
     }
     
-    function addCoords(coord1, coord2) {    
+    function sumCoords(coord1, coord2) {    
         return [coord1[0] + coord2[0], coord1[1] + coord2[1]];
     }
     function validCoords(coord) {

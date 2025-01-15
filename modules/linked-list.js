@@ -12,7 +12,7 @@ export function Queue(array=[]) {
     //return functions
     function enqueue(value) {
         const newNode = LinkedListNode(value);
-        if (listIsEmpty()) {
+        if (isEmpty()) {
             _head = newNode;
         } else {
             _tail.next = newNode;
@@ -22,23 +22,24 @@ export function Queue(array=[]) {
     }
 
     function dequeue() {
-        if (listIsEmpty()) {
+        if (isEmpty()) {
             return null;
         }
         const popped = _head;
         _head = _head.next;
-        length -= 1;
-        return popped;
+        _length -= 1;
+        return popped.data;
     }
 
     //helper functions
-    function listIsEmpty() {
+    function isEmpty() {
         return !_head;
     }
 
     return {
         enqueue,
         dequeue,
+        isEmpty,
         get length() {
             return _length;
         }
