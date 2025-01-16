@@ -3,43 +3,52 @@ import { Knight } from "./modules/knight.js";
 
 const log = console.log;
 
-knightMoves([0, 0], [1, 1]);
+const testDestination = [4, 3];
+
+const path = knightMoves([3, 3], testDestination);
+
+console.log(path.map((step) => `[${step.join(', ')}]`).join(', '));
 
 function knightMoves(from, to) {
     validateInputs(from, to);
 
     const knight = Knight();
 
+    const knightHasArrived = knightIsTravellingTo(to);
+
     const queue = Queue();
-    //const visitedNodes =  use keyset with coordtokey
+    const visitedNodes = KeySet(coordToKey);
+    const startNode = PositionNode(from, 0);
 
-    queue.enqueue(PositionNode(from, 0));
+    queue.enqueue([startNode]);
+    visitedNodes.add(startNode.position);
 
-    let SAFETY = 20;
+    let SAFETY = 64;
 
     while (!queue.isEmpty() && SAFETY > 0) {
-        const currentNode = queue.dequeue();
+        const currentPath = queue.dequeue();
+        const currentNode = currentPath[currentPath.length - 1];
         const currentDistance = currentNode.distance;
 
         const validMoves = knight.validMoves(currentNode.position);
-        
-        log('position', currentNode.position)
+
         for (const validMove of validMoves) {
-            queue.enqueue(PositionNode(validMove, currentDistance + 1));
-            log(validMove);
+            if (!visitedNodes.has(validMove)) {
+                const continuedPath = [...currentPath, PositionNode(validMove, currentDistance + 1)];
+
+                if (knightHasArrived(validMove)) {
+                    const truePath = continuedPath.map((node) => node.position);
+
+                    return truePath;
+                }
+                
+                queue.enqueue(continuedPath);
+                visitedNodes.add(validMove);    
+            }
         }
 
-
-
         SAFETY -= 1;
-        log(SAFETY);
     }
-
-    //do until <to> is dequeued:
-    //  node = dequeue
-    //  get single moves from node
-    //  create nodes containing a single move and distance + 1
-    //  enqueue single nodes if they have not been visited yet
 }
 
 //factory functions
@@ -65,6 +74,9 @@ function KeySet(funcConvertToKey) {
         },
         has(value) {
             return set.has(funcConvertToKey(value));
+        },
+        logSet() {
+            log(set);
         }
     }
 }
@@ -95,5 +107,12 @@ function coordToKey(x, y) {
         coords = x;
     } else {
         coords = [x, y];
+    }
+
+    return `${coords[0]}${coords[1]}`;
+}
+function knightIsTravellingTo(to) {
+    return function(from) {
+        return coordToKey(from) === coordToKey(to);
     }
 }
